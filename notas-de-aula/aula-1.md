@@ -372,7 +372,7 @@ Suponhamos em nosso exemplo anterior dos parágrafos que queremos que apenas um 
 }
 ```
 
-Vamos supor agora que temos 5 parágrafos, e queremos que apenas o primeiro e o terceiro fiquem vermelhos. Podemos utilizar para isso o atributo `class`. A principal diferença entre os dois é que pode haver múltiplos elementos da mesma classe, enquanto o id deve ser associado a um único elemento dentro da página.
+Vamos supor agora que temos 5 parágrafos, e queremos que apenas o primeiro e o terceiro fiquem vermelhos. Podemos utilizar para isso o atributo `class`. A principal diferença entre os dois é que pode haver múltiplos elementos da mesma classe, enquanto o id deve ser associado a um único elemento dentro da página. Além disso, um elemento pode possuir múltiplas classes, mas somente um id.
 
 ```html
 <!-- index.html -->
@@ -438,28 +438,345 @@ Podemos combinar seletores de várias formas. Serão apresentadas três delas:
 
   ```html
   <!-- index.html -->
-  <p>Parágrafo</p>
-  <h1>Título</p>
+  <div id="paragrafos">
+      <h1>Título filho</h1>
+      <p>Parágrafo filho</p>
+      <div>
+          <p>Parágrafo neto</p>
+      </div>
+  </div>
+  <p>Parágrafo irmão</p>
   ```
-
-  
 
   ```css
   /* styles.css */
-  p, h1 {
+  #paragrafos p{
       color: red;
   }
   ```
 
-  
+  Nesse caso, selecionamos todos os elementos dentro do primeiro seletor que satisfazem o segundo seletor.
 
+Podemos ainda combinar essas "operações" e criar uma lógica complexa de seleção de elementos.
 
+```css
+/* styles.css */
+div.vermelho p, h1 {
+    color: red;
+}
+```
 
-**Observação:** O assunto "seletor" é muito mais profundo do que aquilo que foi apresentado aqui, e há muitas informações importantes que foram deixadas de lado por enquanto. O tempo é curto e infelizmente não dá para abordar tudo agora, no entanto, as ferramentas apresentadas já são bem poderosas. 
+**Observação:** O assunto "seletor" é muito mais profundo do que aquilo que foi apresentado aqui, e há muitas informações importantes que foram deixadas de lado por enquanto. O tempo é curto e infelizmente não dá para abordar tudo agora, no entanto, as ferramentas apresentadas já são bem poderosas.
 
 #### DevTools - Elements
 
+Com as ferramentas de desenvolvedor, na aba "*elements*", pode ser verificado o que está acontecendo no DOM, verificando quanto espaço na página um determinado elemento está ocupando, e quais conjuntos propriedade-valor foram aplicados a ele. Além disso, é possível manipular os valores do HTML e CSS e fazer testes. Note que as alterações feitas nas ferramentas de desenvolvedor não serão salvas ao recarregar a página.
 
+#### *Containers* div e span
+
+*Containers*, em HTML, são elementos de *layout* que, essencialmente, armazenam outros elementos e os organiza.
+
+Os principais *containers* são `div` e `span`, e a principal diferença está no modo de `display` deles.
+
+- `div` possui por padrão o valor `block` na propriedade `display`.
+- `span` possui por padrão o valor `inline` na propriedade `display`. 
+
+Não vamos entrar em detalhes da diferença, vamos nos contentar com como esses elementos são usados na prática:
+
+- `div` você usa para elementos de *layout* quaisquer, dividindo a página em vários componentes, um dentro do outro.
+- `span` você usa para estilizar uma parte de um texto, por exemplo para deixar em negrito e na com vermelha.
+
+O uso de `div` é muito mais frequente que de `span`. Pensando em um *blog*, podemos usar `divs` para, por exemplo:
+
+- Dividir a página em: barra de navegação, conteúdo principal e conteúdo lateral.
+- Dividir o conteúdo principal em: postagem 1, postagem 2, postagem 3, ...
+- Dividir cada postagem em: cabeçalho, conteúdo, rodapé.
+
+A estrutura que acabamos de descrever, usando apenas `divs`, deve se parecer com isso:
+
+```html
+<div id="navegacao">...</div>
+<div id="conteudo-principal">
+    <div class="postagem">
+        <div class="cabecalho">...</div>
+        <div class="conteudo">...</div>
+        <div class="rodape">...</div>
+    </div>
+    <div class="postagem">...</div>
+    <div class="postagem">...</div>
+    <div class="postagem">...</div>
+    <div class="postagem">...</div>
+</div>
+<div id="conteudo-lateral">...</div>
+```
+
+**Observação:** Apesar deste conteúdo estar fortemente ligado ao HTML, é comum utilizarmos *containers* quando desejamos fazer algo com eles no CSS. Por isso acredito que faz sentido trazer esse conteúdo para cá.
+
+#### Tamanho, margem, borda e padding
+
+Nesta seção, é muito importante o uso das ferramentas de desenvolvedor.
+
+Vamos brincar um pouco com as `divs`.
+
+```html
+<!-- index.html -->
+<div id="bloco-principal"></div>
+```
+
+```css
+/* styles.css */
+#bloco-principal {
+    width: 100px;
+    height: 100px;
+    background: red;
+}
+```
+
+Perceba que foi criado um quadrado vermelho com 100px de largura. Usando as DevTools, verifique que a margem presente na página vem do elemento `body`. Vamos arrumar isso.
+
+```css
+/* styles.css */
+body {
+    margin: 0;
+}
+```
+
+Agora a margem sumiu. Vamos adicioná-la de volta, mas dessa vez na `div`
+
+```css
+/* styles.css */
+#bloco-principal {
+    ...
+    margin: 10px;
+}
+```
+
+Perceba que apesar de definirmos a margem como 10px, ela se estende à direita até o fim da página. Esse comportamento é consequência do valor `block` na propriedade `display`. Vamos alterar para `inline-block`, dessa forma temos o comportamento esperado.
+
+```css
+/* styles.css */
+#bloco-principal {
+    ...
+    display: inline-block;
+}
+```
+
+Com esse ambiente construído, é hora de entender a diferença entre "margem", "borda" e "padding".
+
+```css
+/* styles.css */
+#bloco-principal {
+    ...
+    border: 5px solid black; /* Adicione primeiro esta linha e use as DevTools */
+    padding: 10px; /* Depois, adicione esta linha e use novamente as DevTools */
+}
+```
+
+Podemos verificar com esse simples experimento que:
+
+- A margem define um espaçamento entre o elemento e outros elementos
+- O padding define um espaçamento entre o elemento e seu conteúdo
+- A borda representa a fronteira do elemento.
+- Cada um dos três é adicionado individualmente (a largura final do quadrado é 10 + 5 + 10 + 100 + 10 + 5 + 10 = 150px) 
+
+Agora vamos verificar tamanho
+
+```html
+<!-- index.html -->
+<div id="bloco-principal">
+    <div id="bloco-interno"></div>
+</div>
+```
+
+```css
+/* styles.css */
+#bloco-interno {
+    width: 30px;
+  	height: 30px;
+    background: blue;
+    display: inline-block;    
+}
+```
+
+O que acha que acontece quando definimos a largura do bloco interno para `100%`? Vamos testar
+
+```css
+/* styles.css */
+#bloco-interno {
+    width: 100%;
+    ...
+}
+```
+
+Preencheu toda a largura do bloco principal, o que significa que % nesse contexto é em relação ao tamanho do conteúdo do pai. Experimente aumentar para `200%` e veja que ocorre o que chamamos de `overflow`, que é quando um elemento filho fica maior do que o pai.
+
+Para utilizarmos uma porcentagem com relação ao tamanho da página, devemos usar `vw` para largura e `vh` para altura.
+
+```css
+/* styles.css */
+#bloco-interno {
+    width: 50vw;
+    ...
+}
+```
+
+Perceba que, redimensionando a página, a proporção é mantida.
+
+#### Flexbox
+
+*Flexbox* é uma das tecnologias mais simples e mais poderosas no desenvolvimento de *layouts*. Para utilizá-la em uma `div`, basta definir a propriedade `display` como `flex`, sobrescrevendo o valor padrão `block`.
+
+```html
+<!-- index.html -->
+<div>
+    <p>Me centralize!</p>
+    <p>Me centralize também!</p>
+</div>
+```
+
+```css
+/* styles.css */
+div {
+    width: 100%;
+    height: 100%;
+    background: lightcoral;
+    display: flex;
+}
+```
+
+Veja como é fácil centralizar conteúdos com *flexbox*.
+
+```css
+/* styles.css */
+div {
+    ...
+    justify-content: center;    
+}
+```
+
+Mas queremos que os parágrafos apareçam na forma de coluna.
+
+```css
+/* styles.css */
+div {
+    ...
+    flex-direction: column; 
+}
+```
+
+Agora não está mais alinhado ao centro! Isso porque a propriedade `justify-content` centraliza com relação ao eixo principal. Para centralizar com relação ao eixo secundário, é preciso utilizar a propriedade `align-items`.
+
+```css
+/* styles.css */
+div {
+    ...
+    align-items: center; 
+}
+```
+
+Caso tenha ficado com dúvida em alguma etapa, utilize as ferramentas de desenvolvedor.
+
+É de extrema importância dominar *flexbox*, pois é aplicável em diversas partes de um *layout*, e muito simples de utilizar. As DevTools do Google Chrome fornecem um jeito muito simples de testar o comportamento de *flexbox*.
+
+Segue um conteúdo complementar sobre *flexbox*, do canal Cod3r Cursos: https://www.youtube.com/watch?v=s-CARPA01NU. Não se preocupe com as tecnologias citadas durante o vídeo, foque no essencial.
+
+#### Conhecendo outras propriedades e valores
+
+Não daremos muito enfoque nos conjuntos propriedade-valor, pois não vale a pena. Nessa situação, o que mais conta é a experiência, e para conseguir isso, pense sempre no "o que fazer" antes do "como fazer".
+
+Ou seja, pense em um elemento, como por exemplo um parágrafo, e pense como deseja estilizá-lo. Depois, procure as propriedades que podem fazê-lo atingir esse objetivo. Se necessário, consulte a *internet* no processo.
+
+Pode parecer óbvio esse processo de primeiro pensar "o que fazer" para depois "como fazer", mas não é. O que acontece é que, conhecendo algumas poucas propriedades, você pode ficar estagnado e limitando-se ao que você sabe, seria "fazer aquilo que você sabe que consegue". Isso é péssimo pro aprendizado, principalmente porque grande parte do conteúdo de CSS puro na internet é obsoleto, e isso pode te fazer pensar que aquilo é o máximo que você pode fazer com CSS.
+
+Porém, CSS é uma linguagem muito poderosa, e dá pra fazer muita coisa legal, bonita e moderna com ela, basta procurar e aprender. Caso tenha dúvida, navegue no *site* https://codepen.io/.
+
+#### Estilizando o Tweet
+
+Hora de estilizar o *tweet* cujo HTML foi feito anteriormente.
+
+```html
+<!-- index.html -->
+<div class="tweet">
+    <header>
+        <img src="img/neymar.jpg" />
+        <div class="names">
+            <h2>Neymar Jr</h2>
+            <h3>@neymarjr</h3>
+        </div>
+    </header>
+    <p class="main-text">
+        Bora falar de bbb porque de futebol esse fds não foi legal 😢
+    </p>
+    <footer>
+        <p>6:14 p. m. - 31 jan. 2021 - Twitter for iPhone</p>
+    </footer>
+</div>
+```
+
+```css
+/* styles.css */
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+p,
+h2,
+h3 {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.tweet {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+}
+
+.tweet header {
+  display: flex;
+}
+
+.tweet header .names {
+  display: flex;
+  flex-direction: column;
+  margin-left: 10px;
+  justify-content: center;
+}
+
+.tweet header .names h2 {
+  margin-bottom: 3px;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.tweet header .names h3 {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+}
+
+.tweet header img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 100%;
+}
+
+.tweet .main-text {
+  margin: 10px 0;
+  font-size: 20px;
+}
+
+.tweet footer p {
+  color: #666;
+}
+```
+
+Perceba como o código HTML teve de ser adaptado.
 
 ---
 
