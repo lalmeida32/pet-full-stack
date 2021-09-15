@@ -161,7 +161,7 @@ Segue a função dos elementos:
 
 **Observação:** Nas DevTools é comum utilizar código HTML para descrever o DOM, afinal, facilita a leitura do desenvolvedor.
 
-**Bônus:** No tópico anterior utilizamos a *tag* `script` dentro do `body`. Com as novas *features* do HTML5, é possível colocar a *tag* `script` no `head` e acrescentar o atributo `defer`. Esse atributo fará com que o código JavaScript seja executado após a construção do DOM.
+**Bônus:** No tópico anterior utilizamos a *tag* `script` dentro do `body`. Com as novas *features* do HTML5, é possível colocar a *tag* `script` no `head` e acrescentar o atributo `defer`. Esse atributo fará com que o código JavaScript seja executado após a construção do DOM, mas para funcionar corretamente, deve ser utilizado um arquivo externo com extensão `.js`.
 
 #### *Tags* HTML
 
@@ -690,6 +690,8 @@ Pode parecer óbvio esse processo de primeiro pensar "o que fazer" para depois "
 
 Porém, CSS é uma linguagem muito poderosa, e dá pra fazer muita coisa legal, bonita e moderna com ela, basta procurar e aprender. Caso tenha dúvida, navegue no *site* https://codepen.io/.
 
+**Observação:** Tenha o bom senso de não escolher algo muito complicado para fazer logo de início. No processo de aprendizagem, é importante fixar conceitos utilizando códigos pequenos.
+
 #### Estilizando o Tweet
 
 Hora de estilizar o *tweet* cujo HTML foi feito anteriormente.
@@ -786,7 +788,90 @@ Perceba como o código HTML teve de ser adaptado.
 
 ---
 
+Vamos fazer uma breve introdução à linguagem de programação JavaScript.
 
+#### Onde escrever JavaScript
+
+Coloque dentro do `head` a *tag* `script`.
+
+```html
+<head>
+	<script>
+    	alert("Olá, mundo!");
+    </script>
+</head>
+```
+
+#### Um pouco sobre a linguagem
+
+A linguagem JavaScript possui vários dos recursos mais simples de outras linguagens, como variáveis, `if`, `for`, `while`, mudando apenas a sintaxe em algumas situações.
+
+É uma linguagem cheia de problemas e particularidades, mas muito poderosa caso sejam seguidas as boas práticas. Isso não será abordado nessa aula por ser um conteúdo bem extenso.
+
+O código é executado linha por linha de forma síncrona. No entanto, é possível adicionar elementos de assincronismo, com eventos.
+
+```javascript
+setTimeout(function() {
+    alert("Olá, mundo!");
+}, 5000);
+```
+
+A função anônima (sem nome) será executada após, pelo menos, 5000 milissegundos (5 segundos). Quando essa função anônima é executada, é exibida na tela a mensagem "Olá, mundo!".
+
+#### Acessando o DOM
+
+O navegador fornece APIs para manipular uma página via JavaScript. Uma das mais importantes APIs é o objeto `document`. Com ele podemos acessar elementos do DOM via id, por exemplo.
+
+```html
+<head>
+    <script>
+        // A variável "paragrafo" armazena um elemento DOM
+        var paragrafo = document.getElementById("paragrafo");
+        
+        paragrafo.innerHTML += " <3";
+        paragrafo.style.color = "red";
+        paragrafo.onclick = function() {
+            alert("Elemento clicado");
+        }
+    </script>
+</head>
+<body>
+    <p id="paragrafo">Isto é um parágrafo manipulado via JavaScript!</p>
+</body>
+```
+
+Há um problema com esse código: o `script` está sendo executado antes da construção completa do DOM. Para que o código funcione devidamente há duas opções: colocar o `script` ao fim do `body` ou adicionar o atributo booleano `defer` e utilizar um arquivo externo. Vamos seguir com a última opção.
+
+```html
+<!-- index.html -->
+<head>
+    <script src="main.js" defer></script>
+</head>
+<body>
+    <p id="paragrafo">Isto é um parágrafo manipulado via JavaScript!</p>
+</body>
+```
+
+```javascript
+// main.js
+var paragrafo = document.getElementById("paragrafo");
+
+paragrafo.innerHTML += " <3";
+paragrafo.style.color = "red";
+paragrafo.onclick = function() {
+    alert("Elemento clicado");
+}
+```
+
+Agora, caso esteja utilizando HTML5, a página se comportará como esperado.
+
+**Observação:** Perceba que o atributo `onclick` executa uma função anônima cada vez que o elemento em questão é clicado. Os atributos que começam com `on` são chamados de "eventos" e são capazes de executar uma função após algo ter ocorrido com relação ao elemento.
+
+#### DevTools - Console
+
+A aba *console* das DevTools nos fornece informações de erros no JavaScript e na obtenção de recursos, além de ser possível visualizar o conteúdo dentro de uma variável e alterar o comportamento de um elemento.
+
+Para exibir variáveis ou objetos no *console*, use a função `console.log`. Note que `console`, assim como `document`, se trata de outra API fornecida pelo navegador.
 
 ---
 
@@ -796,7 +881,240 @@ Perceba como o código HTML teve de ser adaptado.
 
 ---
 
+Vamos estudar o funcionamento de um sistema *web* simples, com um servidor responsável por entregar páginas estáticas ao cliente.
 
+#### Servidor
+
+Um servidor nada mais é um processo que está aberto para comunicação com outros processos. Vamos estudar os servidores que seguem o modelo de *request* e *response*.
+
+Segue uma **ANALOGIA**.
+
+Pense em um programa cuja função é receber um inteiro como entrada e produzir como saída o dobro deste número, em *loop*. Seria algo como:
+
+```c
+while (1) {
+    int num;
+    scanf("%d", &num);
+    printf("%d\n", 2 * num);
+}
+```
+
+Este é o nosso "servidor". Vamos executá-lo
+
+```
+> 2    (request)
+< 4    (response)
+> 10
+< 20
+> 313
+< 626
+```
+
+Você, como usuário, fez papel de **CLIENTE**. Você manda *requests* contendo um número ao servidor, e o servidor te manda uma *response* contendo o dobro desse número.
+
+Pense agora em outro programa que é "cliente" deste primeiro. Esse programa envia um número ao servidor e recebe o dobro deste número como resposta, depois salva em um arquivo.
+
+```c
+FILE *fp;
+...
+int num = 3;
+int dobro;
+printf("%d\n", num);
+scanf("%d", &dobro);
+fprintf(fp, "%d\n", dobro);
+```
+
+Vamos executá-lo.
+
+```
+< 3    (request)
+> 6    (response)
+~ salva valor 6 em um arquivo ~
+```
+
+Perceba que agora, você como usuário fez papel de **SERVIDOR**. Quem recebeu a *request* foi você, e devolveu como *response* o dobro do número informado.
+
+Pense agora que existe uma maneira de fazer com que os dois programas se comuniquem. Não vamos escrever a implementação em C, mas assuma que isso é possível.
+
+```
++--------------+                +--------------+
+|              |     Como       |              |
+|  server.exe  |  estabelecer   |  client.exe  |
+|              |  comunicação?  |              |
++--------------+                +--------------+
+```
+
+Podemos usar as portas de rede para isso. Vincularemos o processo `server.exe` à porta 3000.
+
+```
++--------------+                +--------------+
+|              +------+         |              |
+|  server.exe  | 3000 |         |  client.exe  |
+|              +------+         |              |
++--------------+                +--------------+
+```
+
+Podemos agora, fazer com que o `client.exe`, mande requisições ao `server.exe`.
+
+```
++--------------+                +--------------+
+|              +------+         |              |
+|  server.exe  | 3000 |<------->|  client.exe  |
+|              +------+         |              |
++--------------+                +--------------+
+```
+
+Nessa situação, o nosso servidor:
+
+- Fica aguardando requisições na porta 3000.
+- Quando recebe um número como *request*, retorna como *response* o dobro do número informado ao `client.exe`.
+
+Note que neste modelo uma ***response* necessariamente ocorre após uma *request***.
+
+Do ponto de vista do cliente:
+
+- Mandamos um número para a porta 3000, como *request*.
+- Recebemos como *response* um número, que seria o dobro daquele informado na *request*.
+- Armazenamos esse número em um arquivo.
+
+E o que acontece quando enviamos como *request* algo que não é número, como uma *string*? Para que tudo ocorra bem, deve ser estabelecido um padrão de comunicação entre cliente e servidor. É aí que entra o protocolo HTTP.
+
+#### Protocolo HTTP
+
+O protocolo HTTP nada mais é que uma linguagem de comunicação entre um cliente e um servidor. Possui como principal objetivo a entrega de recursos (páginas *web*, imagens, arquivos, etc.) na rede, e utiliza o modelo *request*/*response*.
+
+Sempre que você escreve um URL no navegador e aperta *enter*, o navegador envia uma *request* seguindo este formato:
+
+```http
+GET /index.html HTTP/1.1
+Host: www.meusite.com
+Accept-Language: pt-br
+```
+
+E recebe do servidor uma *response*:
+
+```http
+HTTP/1.1 200 OK
+Date: 1 Jan 2021 09:00
+Content-Type: text/html
+
+<!DOCTYPE html>
+<html>
+...
+</html>
+```
+
+Cada *request*/*response* HTTP é dividida em *header* e *body*. No caso de requisições GET, não há *body*.
+
+O protocolo HTTP segue o mesmo diagrama feito anteriormente, a diferença é que, no caso de um *website* já devidamente hospedado, a internet faz o intermédio na comunicação entre o processo cliente e o servidor. No lugar de `client.exe` seria `chrome.exe` por exemplo, caso o navegador em questão seja o Google Chrome.
+
+#### Criando um servidor HTTP
+
+Node.js é um programa que roda JavaScript fora do navegador. Com ele e o *framework* Express, podemos criar um servidor HTTP de forma bem simples.
+
+```javascript
+const express = require('express')
+const app = express()
+
+app.get('/', function (request, response) {
+  response.send('Hello, world')
+})
+
+app.listen(3000)
+```
+
+Neste código, criamos um servidor HTTP que, sempre que recebe uma requisição na rota raiz, retorna "Hello World" no *body* da *response*. Os *response headers* nesse caso são gerados automaticamente.
+
+Para enviar essa requisição basta colocar no URL do navegador `http://localhost:3000` e apertar *enter*. `localhost` serve para referenciar a própria máquina.
+
+#### Rotas
+
+O conceito de "rota" é muito importante em sistemas *web*. Quando definimos `app.get('/', ...)` estamos utilizando a rota raiz, como se fosse um sistema de arquivos. Se alterarmos para `app.get('/indice', ...)`, por exemplo, e acessarmos o mesmo URL de antes, obteremos o erro *not found* (código 404).
+
+```http
+HTTP/1.1 404 Not Found
+X-Powered-By: Express
+...
+```
+
+Então devemos acessar o URL `http://localhost:3000/indice` para tudo funcionar corretamente.
+
+Vamos agora enviar uma página HTML através do servidor.
+
+```javascript
+const path = require('path')
+const express = require('express')
+const app = express()
+
+app.get('/', function (request, response) {
+  response.sendFile(path.join(__dirname, 'index.html'))
+})
+
+app.listen(3000)
+```
+
+Vamos criar, dentro da mesma pasta do servidor, o arquivo `index.html`.
+
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Documento HTML genérico</p>
+    <a href="views/other.html">Link para outro documento HTML.</a>
+  </body>
+</html>
+```
+
+E, dentro de `views`, vamos criar o arquivo `other.html` e preencher com o conteúdo:
+
+```html
+<!-- other.html -->
+<!DOCTYPE html>
+<html>
+  <body>
+    <p>Outro documento HTML genérico</p>
+    <a href="../index.html">Voltar</a>
+  </body>
+</html>
+```
+
+Como fizemos anteriormente. Deve funcionar, certo?
+
+Ao clicar no hyperlink `Link para outro documento HTML`, somos redirecionados para a rota `http://localhost:3000/views/other.html`.
+
+Essa rota não está definida, e por isso o servidor envia *not found* com a mensagem `Cannot GET /views/other.html`. Então lembre-se **sistema de arquivos e sistema de rotas não é a mesma coisa**.
+
+Quando utilizamos `src` ou `href` com um servidor HTTP, estamos navegando sobre rotas, e não arquivos. Perceba que, abrindo o documento `index.html` direto do navegador, o hyperlink funciona normalmente. Podemos consertar o problema de várias formas, vamos fazer da mais simples:
+
+```html
+<!-- index.html -->
+<a href="/views/other">...</a>
+```
+
+```html
+<!-- other.html -->
+<a href="/">...</a>
+```
+
+```javascript
+...
+app.get('/', function (request, response) {
+  response.sendFile(path.join(__dirname, 'index.html'))
+})
+
+app.get('/views/other', function (request, response) {
+  response.sendFile(path.join(__dirname, 'views/other.html'))
+})
+...
+```
+
+Agora associamos as rotas:
+
+- `/ -> index.html`
+- `/views/other -> other.html`
+
+Com isso, a navegação funciona como esperado
 
 ---
 
