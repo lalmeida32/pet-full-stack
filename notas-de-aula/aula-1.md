@@ -2,13 +2,33 @@
 
 
 
-
-
 ## Aula 1
 
 
 
-### Objetivos
+### Índice
+
+---
+
+[Objetivos](#objetivos)
+
+[Ambiente de desenvolvimento](#ambiente-de-desenvolvimento)
+
+[Overviews das linguagens HTML, CSS e JavaScript](#overview-das-linguagens)
+
+[HTML](#html)
+
+[CSS](#css)
+
+[JavaScript](#javascript)
+
+[Sistemas Web](#sistemas-web)
+
+---
+
+
+
+### Objetivos<a name="objetivos"></a>
 
 ---
 
@@ -22,7 +42,7 @@ Esta aula tem como objetivo familiarizar o aluno com o básico do desenvolviment
 
 
 
-### Ambiente de desenvolvimento
+### Ambiente de desenvolvimento<a name="ambiente-de-desenvolvimento"></a>
 
 ---
 
@@ -66,7 +86,7 @@ Praticamente todo navegador *web* provê "ferramentas de desenvolvedor" (também
 
 
 
-### Overview das linguagens HTML, CSS e JavaScript
+### Overview das linguagens HTML, CSS e JavaScript<a name="overview-das-linguagens"></a>
 
 ---
 
@@ -133,7 +153,7 @@ A ideia desse tópico era apresentar as três linguagens e assimilar a função 
 
 
 
-### HTML
+### HTML<a name="html"></a>
 
 ---
 
@@ -281,7 +301,7 @@ Há uma quarta preocupação quanto à semântica dos elementos, como o uso de `
 
 
 
-### CSS
+### CSS<a name="css"></a>
 
 ---
 
@@ -784,7 +804,7 @@ Perceba como o código HTML teve de ser adaptado.
 
 
 
-### JavaScript
+### JavaScript<a name="javascript"></a>
 
 ---
 
@@ -877,7 +897,7 @@ Para exibir variáveis ou objetos no *console*, use a função `console.log`. No
 
 
 
-### Sistemas Web
+### Sistemas Web<a name="sistemas-web"></a>
 
 ---
 
@@ -1008,6 +1028,10 @@ Cada *request*/*response* HTTP é dividida em *header* e *body*. No caso de requ
 
 O protocolo HTTP segue o mesmo diagrama feito anteriormente, a diferença é que, no caso de um *website* já devidamente hospedado, a internet faz o intermédio na comunicação entre o processo cliente e o servidor. No lugar de `client.exe` seria `chrome.exe` por exemplo, caso o navegador em questão seja o Google Chrome.
 
+#### DevTools - Network
+
+Com a aba *network* das ferramentas de desenvolvedor é possível visualizar de maneira amigável o que está acontecendo no fluxo de dados, incluindo as *requests* e *responses* HTTP. Para funcionar adequadamente, a página deve ser recarregada.
+
 #### Criando um servidor HTTP
 
 Node.js é um programa que roda JavaScript fora do navegador. Com ele e o *framework* Express, podemos criar um servidor HTTP de forma bem simples.
@@ -1115,6 +1139,10 @@ Agora associamos as rotas:
 - `/views/other -> other.html`
 
 Com isso, a navegação funciona como esperado
+
+#### DevTools - Sources
+
+A aba *sources* mostra os arquivos recebidos pelo servidor ou pelo sistema de arquivos. 
 
 ---
 
